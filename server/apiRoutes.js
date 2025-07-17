@@ -36,7 +36,7 @@ router.post('/save', async (req, res) => {
     const newInput = new InputModel({ value });
     await newInput.save();
 
-    res.status(201).json({ message: 'Value saved successfully' });
+    res.status(201).json({ message: 'Value saved successfully', id: newInput._id });
   } catch (error) {
     console.error('Error saving value:', error);
     res.status(500).json({ error: 'Failed to save value' });

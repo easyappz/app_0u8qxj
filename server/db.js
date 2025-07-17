@@ -12,7 +12,7 @@ const mongoDb = mongoose.createConnection(MONGO_URI, {
 mongoDb
   .asPromise()
   .then(() => {
-    console.log('MongoDB connected');
+    console.log('MongoDB connected successfully');
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
