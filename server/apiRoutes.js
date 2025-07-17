@@ -1,24 +1,16 @@
 const express = require('express');
-
-/**
- * Пример создания модели в базу данных
- */
-// const mongoose = require('mongoose');
-// const db = require('/db');
-
-// const MongoTestSchema = new mongoose.Schema({
-//   value: { type: String, required: true },
-// });
-
-// const MongoModelTest = db.mongoDb.model('Test', MongoTestSchema);
-
-// const newTest = new MongoModelTest({
-//   value: 'test-value',
-// });
-
-// newTest.save();
+const mongoose = require('mongoose');
+const { mongoDb } = require('./db');
 
 const router = express.Router();
+
+// Define a schema for saving input values
+const InputSchema = new mongoose.Schema({
+  value: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const InputModel = mongoDb.model('Input', InputSchema);
 
 // GET /api/hello
 router.get('/hello', (req, res) => {
@@ -33,5 +25,22 @@ router.get('/status', (req, res) => {
   });
 });
 
-module.exports = router;
+// POST /api/save
+router.post('/save', async (req, res) => {
+  try {
+    const { value } = req.body;
+    if (!value) {
+      return res.status(400).json({ error: 'Value is required' });
+    }
 
+    const newInput = new InputModel({ value });
+    await newInput.save();
+
+    res.status(201).json({ message: 'Value saved successfully' });
+  } catch (error) {
+    console.error('Error saving value:', error);
+    res.status(500).json({ error: 'Failed to save value' });
+  }
+});
+
+module.exports = router;
