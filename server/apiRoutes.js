@@ -43,4 +43,19 @@ router.post('/save', async (req, res) => {
   }
 });
 
+// GET /api/getLatest
+router.get('/getLatest', async (req, res) => {
+  try {
+    const latestInput = await InputModel.findOne().sort({ createdAt: -1 });
+    if (latestInput) {
+      res.status(200).json({ value: latestInput.value });
+    } else {
+      res.status(404).json({ error: 'No saved value found' });
+    }
+  } catch (error) {
+    console.error('Error fetching latest value:', error);
+    res.status(500).json({ error: 'Failed to fetch latest value' });
+  }
+});
+
 module.exports = router;

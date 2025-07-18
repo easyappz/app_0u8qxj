@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 import { TextField, Button, Box, Typography, Container, Paper } from '@mui/material';
@@ -7,6 +7,41 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
   const [isError, setIsError] = useState(false);
+
+  // Load the latest saved value on component mount
+  useEffect(() => {
+    const fetchLatestValue = async () => {
+      try {
+        const response = await fetch('/api/getLatest', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.value) {
+            setInputValue(data.value);
+            setResponseMessage('Latest value loaded');
+            setIsError(false);
+          } else {
+            setResponseMessage('No saved value found');
+            setIsError(false);
+          }
+        } else {
+          const errorData = await response.json();
+          setResponseMessage(errorData.error || 'Failed to load latest value');
+          setIsError(true);
+        }
+      } catch (error) {
+        setResponseMessage('Failed to connect to the server');
+        setIsError(true);
+      }
+    };
+
+    fetchLatestValue();
+  }, []);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
