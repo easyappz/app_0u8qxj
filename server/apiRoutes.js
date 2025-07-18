@@ -48,7 +48,7 @@ router.get('/getLatest', async (req, res) => {
   try {
     const latestInput = await InputModel.findOne().sort({ createdAt: -1 });
     if (latestInput) {
-      res.status(200).json({ value: latestInput.value });
+      res.status(200).json({ value: latestInput.value, createdAt: latestInput.createdAt });
     } else {
       res.status(404).json({ error: 'No saved value found' });
     }
